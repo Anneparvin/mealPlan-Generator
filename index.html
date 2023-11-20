@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meal Plan Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 10px;
+      background-color: black;
+      color: antiquewhite;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      width: 800px;
+      margin-top: 100px;
+      margin-left: 500px;
+    }
+
+    label {
+      margin-bottom: 10px;
+      margin-top: 15px;
+    }
+
+    select, button {
+      margin-top: 15px;
+    }
+
+    #mealPlan {
+      margin-top: 20px;
+    }
+    #height,#weight, #calories, #lowCarb{
+        padding: 10px;
+        border-radius: 5px;
+    }
+    #btn{
+        padding: 15px;
+        border-radius: 5px;
+        background-color: burlywood;
+        font-size: 20px;
+        font-weight: 700;
+    }
+    @media only screen and (max-width : 576px){
+        form {
+      width: 380px;
+      padding: 5px;
+      justify-content: center;
+      margin-left: 0;
+    }
+
+    }
+  </style>
+</head>
+<body>
+
+    <form id="mealForm">
+        <label for="height">Height (cm):</label>
+        <input type="number" id="height" required>
+    
+        <label for="weight">Weight (kg):</label>
+        <input type="number" id="weight" required>
+    
+        <label for="calories">Daily Calories Goal:</label>
+        <input type="number" id="calories" required>
+    
+        <label for="lowCarb">Low Carb:</label>
+        <select id="lowCarb">
+          <option value="false">No</option>
+          <option value="true">Yes</option>
+        </select>
+    
+        <button id="btn" type="button" onclick="generateMealPlan()">Generate Meal Plan</button>
+      </form>
+    
+      <div id="mealPlan"></div>
+    
+      <script>
+        async function generateMealPlan() {
+          const height = document.getElementById('height').value;
+          const weight = document.getElementById('weight').value;
+          const calories = document.getElementById('calories').value;
+          const lowCarb = document.getElementById('lowCarb').value;
+    
+          // Make a request to the Edamam API to get meal suggestions
+          const appId = 'e3a3a585';
+          const appKey = '9f6ed4bd35e9e564512159ab4ac9562d';
+    
+          const apiUrl = `https://api.edamam.com/api/food-database/v2/parser?ingr=chicken&app_id=${appId}&app_key=${appKey}`;
+    
+          try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+    
+            // Process the data and display the meal plan
+            const mealPlan = generateMealPlanFromEdamamData(data);
+            displayMealPlan(mealPlan);
+          } catch (error) {
+            console.error('Error fetching data from Edamam API:', error);
+          }
+        }
+    
+        function generateMealPlanFromEdamamData(edamamData) {
+          // Replace this with your actual logic for generating meal plans based on Edamam API data
+          // You may need to parse the response and extract relevant information
+          // This is a simplified example
+          const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+          const meals = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
+    
+          const mealPlan = {};
+    
+          days.forEach(day => {
+            mealPlan[day] = {};
+            meals.forEach(meal => {
+              mealPlan[day][meal] = 'Sample Meal';
+            });
+          });
+    
+          return mealPlan;
+        }
+    
+        function displayMealPlan(mealPlan) {
+          const mealPlanDiv = document.getElementById('mealPlan');
+          mealPlanDiv.innerHTML = '';
+    
+          Object.keys(mealPlan).forEach(day => {
+            const dayDiv = document.createElement('div');
+            dayDiv.innerHTML = `<strong>${day}:</strong>`;
+    
+            Object.keys(mealPlan[day]).forEach(meal => {
+              const mealItem = document.createElement('p');
+              mealItem.textContent = `${meal}: ${mealPlan[day][meal]}`;
+              dayDiv.appendChild(mealItem);
+            });
+    
+            mealPlanDiv.appendChild(dayDiv);
+          });
+        }
+      </script>
+ </body>
+</html>
